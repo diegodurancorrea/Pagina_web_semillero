@@ -1,0 +1,21 @@
+cookie:
+  expiry_days: 30
+  key: some_signature_key
+  name: some_cookie_name
+credentials:
+  usernames:
+    cristian23:
+      email: cristian.montoya.g@gmail.com
+      name: Cristian Montoya
+      password: $2b$12$YJTJkipn4duV8b5uKgB7lu0r52sfnkGIZNfYxHJNmBlpN854R0Gm.
+    jsmith:
+      email: jsmith@gmail.com
+      name: John Smith
+      password: abc
+    rbriggs:
+      email: rbriggs@gmail.com
+      name: Rebecca Briggs
+      password: def
+preauthorized:
+  emails:
+  - melsby@gmail.com
