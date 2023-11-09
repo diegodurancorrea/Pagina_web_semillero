@@ -12,11 +12,14 @@ if 'disable' not in st.session_state:
 if 'collapse' not in st.session_state:
     st.session_state.collapse = 'visible'
 
+
+# RETURN: DICCIONARIO CON TODOS LOS VALORES DEL SESION STATUS
 def primer_requisito(**colums):
+    opcion= ('NON','AND','OR')
     colap = False
     nombres_columnas = [str(i) for i in colums.values()]
-    values = {}
-    print(nombres_columnas)
+    
+    
     if len(nombres_columnas) == 2:
         nombres_columnas = st.columns(len(nombres_columnas))
         with nombres_columnas[0]:
@@ -27,7 +30,7 @@ def primer_requisito(**colums):
                 st.session_state.disable = False
 
         with nombres_columnas[1]:
-            st.selectbox(label= 'add boolean', options=('NON','AND','OR'), key= 'select_box_1', disabled= st.session_state.disable , label_visibility= st.session_state.collapse)
+            st.selectbox(label= 'add boolean', options= opcion, key= 'select_box_1', disabled= st.session_state.disable , label_visibility= st.session_state.collapse)
             if st.session_state['select_box_1'] != 'NON':
 
                 colap = True
@@ -45,7 +48,12 @@ def primer_requisito(**colums):
                 st.session_state.disable = False
 
         with nombres_columnas[1]:
-            st.selectbox(label= 'add boolean', options=('NON','AND','OR'), key= 'select_text_2', disabled= st.session_state.disable, label_visibility= st.session_state.collapse )                
+            if st.session_state.select_box_1 == 'OR':
+                opcion = ('NON','OR')
+            else:
+                opcion= ('NON','AND')
+
+            st.selectbox(label= 'add boolean', options=opcion, key= 'select_text_2', disabled= st.session_state.disable, label_visibility= st.session_state.collapse )                
             if st.session_state['select_text_2'] != 'NON':
                 colap = True    
 
@@ -72,52 +80,48 @@ def primer_requisito(**colums):
             primer_requisito(col1 = 'col1',col2 = 'col2', col3 = 'col3',col4='col4', )
             colap = False
 
+   
+    diccionary = {}
 
     for key in st.session_state:
-        values[str(key)] = st.session_state[str(key)]
 
-    return values
+        diccionary[str(key)] = st.session_state[str(key)]
 
- # solo hay que añadir dos columnas en dos columnas hacia abajo   
+
+    return diccionary
+# RESIVE UN DICCIONARIO Y RETORNO QUERY ; LISTA DE STRINGS; LISTA DE BOOLEANOS
 def segundo_requisito(diccionary):
     query = ''
-    string_bol = ''
-    string_str = ''
+    list_string = []
+    list_boolean =[]
 
     if 'disable' in diccionary:
         diccionary.pop('disable')
         diccionary.pop('collapse')
     if 'button' in diccionary:
         diccionary.pop('button')
-
     for key , value in diccionary.items():
 
         if value == 'OR' or value == 'AND' or value == 'NON':
-            if value == 'NON':
-                string_bol = ''
-            elif query != '' :
-                string_bol = value
-                query += "  {}  ".format(string_bol)
-                string_bol = ''
-            else:
-                string_bol = value
+            list_boolean.append(value)
         else:
-            string_str = value
-            query += "   {}  {}  ".format(string_str,string_bol)
-            string_bol = ''
-            
-    return query   
-def tercer_requisito(**kwargs):
-    pass
+            list_string.append(value)
+            query += "  {}  ".format(value)
 
+    return query , list_boolean , list_string   
+# INICIALIZO LA PRIMERA FUNCIÓN
 var = primer_requisito(col1 = 'col1',col2 = 'col2')
+#INICIO LA SEGUNDA FUNCIÓN
+query , list_boolean , list_string = segundo_requisito(var)
+
+
 col1,col2 = st.columns([0.2,0.8]) 
 
 with col1:
-    st.button(label= 'Click to send query', on_click= tercer_requisito, key= 'button', kwargs=var)
+    st.button(label= 'Click to send query', key= 'button')
 with col2:
     if st.session_state.button:
-        st.write(segundo_requisito(var))
+        st.write(query, list_string,list_boolean)
     else:
         st.write('Nothing')
 
